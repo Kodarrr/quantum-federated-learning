@@ -43,3 +43,8 @@ def split_with_missing_digits(y, missing_digits, seed=0):
         client_indices.append(idx[keep])
 
     return client_indices
+
+def include_digits(X, y, included_digits):
+    # shudhu included_digits er chobi gulo rakhe
+    keep = torch.isin(y, torch.tensor(included_digits))
+    return X[keep], y[keep]

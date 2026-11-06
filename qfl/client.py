@@ -7,7 +7,7 @@ class Client:
         self.x=x
         self.y=y
 
-    def train(self,global_model,epochs=2,lr=0.01,batch_size=16):
+    def train(self,global_model,epochs=3,lr=0.01,batch_size=16):
         model = copy.deepcopy(global_model)
 
         optimizer = torch.optim.SGD(model.parameters(),lr=lr)
