@@ -1,6 +1,8 @@
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import MinMaxScaler
 import torch
 import numpy as np
 
@@ -48,3 +50,28 @@ def include_digits(X, y, included_digits):
     # shudhu included_digits er chobi gulo rakhe
     keep = torch.isin(y, torch.tensor(included_digits))
     return X[keep], y[keep]
+
+def load_quantum_data(n_qubits=8):
+    X, y = load_digits(return_X_y=True)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.25, random_state=0)
+
+    # 64 feature -> n_qubits feature (shudhu train theke fit)
+    pca = PCA(n_components=n_qubits)
+    pca.fit(X_train)
+    X_train = pca.transform(X_train)
+    X_test = pca.transform(X_test)
+
+    # 0 theke pi te scale (rotation angle)
+    scaler = MinMaxScaler(feature_range=(0, np.pi))
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    X_train = torch.tensor(X_train, dtype=torch.float32)
+    X_test = torch.tensor(X_test, dtype=torch.float32)
+    y_train = torch.tensor(y_train)
+    y_test = torch.tensor(y_test)
+
+    return X_train, y_train, X_test, y_test
